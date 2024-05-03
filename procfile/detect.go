@@ -14,41 +14,41 @@
  * limitations under the License.
  */
 
- package procfile
+package procfile
 
- import (
-	 "os"
- 
-	 "github.com/buildpacks/libcnb"
-	 "github.com/paketo-buildpacks/libpak/bard"
- )
- 
- type Detect struct{}
- 
- func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error) {
-	 l := bard.NewLogger(os.Stdout)
-	 // Create Procfile from source path or binding, if both exist, merge into one. The binding takes precedence on duplicate name/command pairs.
-	 p, err := NewProcfileFromEnvironmentOrPathOrBinding(context.Application.Path, context.Platform.Bindings)
-	 if err != nil {
-		 return libcnb.DetectResult{}, err
-	 }
- 
-	 if len(p) == 0 {
-		 l.Logger.Info("SKIPPED: No procfile found from environment, source path, or binding.")
-		 return libcnb.DetectResult{Pass: false}, nil
-	 }
- 
-	 return libcnb.DetectResult{
-		 Pass: true,
-		 Plans: []libcnb.BuildPlan{
-			 {
-				 Provides: []libcnb.BuildPlanProvide{
-					 {Name: "procfile"},
-				 },
-				 Requires: []libcnb.BuildPlanRequire{
-					 {Name: "procfile", Metadata: p},
-				 },
-			 },
-		 },
-	 }, nil
- }
+import (
+	"os"
+
+	"github.com/buildpacks/libcnb"
+	"github.com/paketo-buildpacks/libpak/bard"
+)
+
+type Detect struct{}
+
+func (d Detect) Detect(context libcnb.DetectContext) (libcnb.DetectResult, error) {
+	l := bard.NewLogger(os.Stdout)
+	// Create Procfile from source path or binding, if both exist, merge into one. The binding takes precedence on duplicate name/command pairs.
+	p, err := NewProcfileFromEnvironmentOrPathOrBinding(context.Application.Path, context.Platform.Bindings)
+	if err != nil {
+		return libcnb.DetectResult{}, err
+	}
+
+	if len(p) == 0 {
+		l.Logger.Info("SKIPPED: No procfile found from environment, source path, or binding.")
+		return libcnb.DetectResult{Pass: false}, nil
+	}
+
+	return libcnb.DetectResult{
+		Pass: true,
+		Plans: []libcnb.BuildPlan{
+			{
+				Provides: []libcnb.BuildPlanProvide{
+					{Name: "procfile"},
+				},
+				Requires: []libcnb.BuildPlanRequire{
+					{Name: "procfile", Metadata: p},
+				},
+			},
+		},
+	}, nil
+}

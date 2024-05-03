@@ -1,3 +1,4 @@
+
 The Procfile Buildpack is a Cloud Native Buildpack that turns the contents of a Procfile into process types.
 
 ## Behavior
@@ -5,8 +6,14 @@ This buildpack will participate if one or all of the following conditions are me
 
 * The application contains a `Procfile`
 * A Binding exists with type `Procfile` and secret containing a `Procfile`
+* The `BP_PROCFILE_DEFAULT_PROCESS` environment variable is set to a non-empty value
 
 The buildpack will do the following:
+
+* When `BP_PROCFILE_DEFAULT_PROCESS` is set, it will contribute the `web` process type to the image.
+* Contribute the process types from one or both `Procfile` files to the image.
+  * If process types are identified from both Binding _and_ file, the contents are merged into a single `Procfile`. Commands from the Binding take precedence if there are duplicate types.
+  * If process types are identified from environment _and_ Binding _or_ file, the contents are merged into a single `Procfile`. Commands from Binding or file take precedence if there are duplicate types, with Binding taking precedence over file.
 
 ## Bindings
 

@@ -4,7 +4,7 @@ github:
 
 codeowners:
 - path:  "*"
-  owner: "@initializ-buildpacks/utilities-maintainers"
+  owner: "@paketo-buildpacks/utilities-maintainers"
 
 package:
   repositories:   ["docker.io/initializbuildpacks/procfile"]

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
- package main
+package main
 
- import (
-	 "os"
- 
-	 "github.com/paketo-buildpacks/libpak"
-	 "github.com/paketo-buildpacks/libpak/bard"
- 
-	 "github.com/initializ-buildpacks/procfile/v5/procfile"
- )
- 
- func main() {
-	 libpak.Main(
-		 procfile.Detect{},
-		 procfile.Build{Logger: bard.NewLogger(os.Stdout)},
-	 )
- }
+import (
+	"os"
+
+	"github.com/paketo-buildpacks/libpak"
+	"github.com/paketo-buildpacks/libpak/bard"
+
+	"github.com/initializ-buildpacks/procfile/v5/procfile"
+)
+
+func main() {
+	libpak.Main(
+		procfile.Detect{},
+		procfile.Build{Logger: bard.NewLogger(os.Stdout)},
+	)
+}
