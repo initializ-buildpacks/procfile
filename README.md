@@ -1,4 +1,3 @@
-# `gcr.io/paketo-buildpacks/procfile`
 The Procfile Buildpack is a Cloud Native Buildpack that turns the contents of a Procfile into process types.
 
 ## Behavior
@@ -8,11 +7,6 @@ This buildpack will participate if one or all of the following conditions are me
 * A Binding exists with type `Procfile` and secret containing a `Procfile`
 
 The buildpack will do the following:
-
-* Contribute the process types from one or both `Procfile` files to the image.
-  * If process types are identified from both Binding _and_ file, the contents are merged into a single `Procfile`. Commands from the Binding take precedence if there are duplicate types.
-  * If the application's stack is `io.paketo.stacks.tiny` the contents of the `Procfile` must be single command with zero or more space delimited arguments. Argument values containing whitespace should be quoted. The resulting process will be executed directly and will not be parsed by the shell.
-  * If the application's stack is not `io.paketo.stacks.tiny` the contents of `Procfile` will be executed as a shell script.
 
 ## Bindings
 
