@@ -1,4 +1,4 @@
-# 'procfile`
+# 'Initializ procfile`
 The Procfile Buildpack is a Cloud Native Buildpack that turns the contents of a Procfile into process types.
 
 ## Behavior
