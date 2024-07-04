@@ -2,7 +2,7 @@
 The Procfile Buildpack is a Cloud Native Buildpack that turns the contents of a Procfile into process types
 
 ## Behavior
-This buildpack will participate if one or all of the following conditions are met:
+This buildpack will participate if one or all of the following conditions are met
 
 * The application contains a `Procfile`
 * A Binding exists with type `Procfile` and secret containing a `Procfile`
