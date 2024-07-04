@@ -1,6 +1,6 @@
 module github.com/initializ-buildpacks/procfile/v5
 
-go 1.22
+go 1.22.5
 
 require (
 	github.com/buildpacks/libcnb v1.30.3
