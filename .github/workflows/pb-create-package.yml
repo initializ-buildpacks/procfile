@@ -18,7 +18,7 @@ jobs:
                 username: ${{ secrets.INITIALIZ_BUILDPACKS_DOCKERHUB_USERNAME }}
             - uses: actions/setup-go@v5
               with:
-                go-version: "1.23"
+                go-version: "1.24"
             - name: Install create-package
               run: |
                 #!/usr/bin/env bash
@@ -26,24 +26,21 @@ jobs:
                 set -euo pipefail
 
                 go install -ldflags="-s -w" github.com/paketo-buildpacks/libpak/cmd/create-package@latest
-            - uses: buildpacks/github-actions/setup-tools@v5.7.2
+            - uses: buildpacks/github-actions/setup-tools@v5.8.9
               with:
-                crane-version: 0.19.1
+                crane-version: 0.20.3
                 yj-version: 5.1.0
-            - uses: buildpacks/github-actions/setup-pack@v5.7.2
+            - uses: buildpacks/github-actions/setup-pack@v5.8.9
               with:
-                pack-version: 0.36.0
+                pack-version: 0.36.4
             - name: Enable pack Experimental
-              if: ${{ false }}
               run: |
                 #!/usr/bin/env bash
 
                 set -euo pipefail
 
                 echo "Enabling pack experimental features"
-
-                mkdir -p "${HOME}"/.pack
-                echo "experimental = true" >> "${HOME}"/.pack/config.toml
+                pack config experimental true
             - uses: actions/checkout@v4
             - if: ${{ false }}
               uses: actions/cache@v4
@@ -135,7 +132,7 @@ jobs:
                 cd "${COMPILED_BUILDPACK}"
                 CONFIG=""
                 if [ -f "${COMPILED_BUILDPACK}/package.toml" ]; then
-                  CONFIG="--config ${COMPILED_BUILDPACK}/package.toml"
+                  CONFIG="--config ${COMPILED_BUILDPACK}/package.toml --flatten"
                 fi
 
                 PACKAGE_LIST=($PACKAGES)
@@ -166,11 +163,16 @@ jobs:
                         crane tag "${P}:${VERSION}" latest
                       fi
                     done
-
                 else
-                  pack -v buildpack package \
-                    "${PACKAGE}:${VERSION}" ${CONFIG} \
-                    --format "${FORMAT}" $([ -n "$TTL_SH_PUBLISH" ] && [ "$TTL_SH_PUBLISH" = "true" ] && echo "--publish")
+                  if [ -n "$TTL_SH_PUBLISH" ] && [ "$TTL_SH_PUBLISH" = "true" ]; then
+                    TAG="${PACKAGE}-$(mktemp -u XXXXX | awk '{print tolower($0)}'):${VERSION}"
+                    pack -v buildpack package "${TAG}" ${CONFIG} --format "${FORMAT}" --publish
+                  else
+                    TAG="${PACKAGE}:${VERSION}"
+                    pack -v buildpack package "${TAG}" ${CONFIG} --format "${FORMAT}"
+                  fi
+
+                  echo "ttl-image-tag=${TAG:-}" >> "$GITHUB_OUTPUT"
                 fi
               env:
                 PACKAGES: docker.io/initializbuildpacks/procfile
@@ -201,7 +203,7 @@ jobs:
                 DIGEST: ${{ steps.package.outputs.digest }}
                 GITHUB_TOKEN: ${{ secrets.PAT }}
             - if: ${{ true }}
-              uses: docker://ghcr.io/buildpacks/actions/registry/request-add-entry:5.7.2
+              uses: docker://ghcr.io/buildpacks/actions/registry/request-add-entry:5.8.9
               with:
                 address: docker.io/initializbuildpacks/procfile@${{ steps.package.outputs.digest }}
                 id: initializ-buildpacks/procfile
